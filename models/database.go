@@ -2,8 +2,10 @@ package models
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -26,7 +28,7 @@ func Database() (*gorm.DB, error) {
 	port := envs["PORT"]
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s database=%s port=%s", hostname, username, password, dbname, port)
-	fmt.Println(dsn)
+
 	sqlDB, _ := sql.Open("pgx", dsn)
 	db, err := gorm.Open(postgres.New(postgres.Config{
 		Conn: sqlDB,
@@ -36,8 +38,21 @@ func Database() (*gorm.DB, error) {
 		log.Fatal(err.Error())
 	}
 
-	if err = db.AutoMigrate(&User{}); err != nil {
-		log.Println(err)
+	if err := db.AutoMigrate(&User{}); err == nil && db.Migrator().HasTable(&User{}) {
+		var rowCount int64
+		db.Table("users").Count(&rowCount)
+
+		if rowCount == 0 {
+			data, err := os.ReadFile("./models/people.json")
+			if err == nil {
+				var users []User
+				err := json.Unmarshal(data, &users)
+
+				if err == nil {
+					db.Model(&User{}).Create(users)
+				}
+			}
+		}
 	}
 
 	return db, err
