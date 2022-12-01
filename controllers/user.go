@@ -36,7 +36,7 @@ func GetUsers(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, users)
+	c.IndentedJSON(http.StatusOK, users)
 
 }
 
@@ -52,7 +52,7 @@ func GetUserByID(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	c.IndentedJSON(http.StatusOK, user)
 }
 
 func PostUser(c *gin.Context) {
@@ -76,7 +76,7 @@ func PostUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	c.IndentedJSON(http.StatusOK, user)
 }
 
 func UpdateUser(c *gin.Context) {
@@ -104,7 +104,7 @@ func UpdateUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, user)
+	c.IndentedJSON(http.StatusOK, user)
 
 }
 
@@ -126,6 +126,6 @@ func DeleteUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "User deleted"})
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "User deleted"})
 
 }
